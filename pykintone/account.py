@@ -104,18 +104,28 @@ class kintoneService(object):
         return len(self.__apps)
 
     def app(self, app_id="", api_token="", app_name=""):
+        """
+        app finds an application by id or name. If not found, app registers the given id, token and name.
+        :param app_id: Application id
+        :param api_token: API token for the application
+        :param app_name: Name of the application
+        :return: An instance of application found or registered.
+        """
         from pykintone.application import Application
-        if not app_id:
-            return self.__apps[0]
-        else:
+        if app_id != "":
             existed = [a for a in self.__apps if a.app_id == app_id]
-            # register if not exist
-            if len(existed) > 0:
-                return existed[0]
-            else:
-                _a = Application(self.account, app_id, api_token, app_name)
-                self.__apps.append(_a)
-                return _a
+        elif app_name != "":
+            existed = [a for a in self.__apps if a.app_name == app_name]
+
+        if len(existed) > 0:
+            return existed[0]
+
+        # register the app if information are fullfilled
+        if app_id != "" and api_token != "" and app_name != "":
+            _a = Application(self.account, app_id, api_token, app_name)
+            self.__apps.append(_a)
+            return _a
+        return None
 
     def administration(self,requests_options=()):
         from pykintone.application_settings.administrator import Administrator

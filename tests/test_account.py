@@ -35,3 +35,35 @@ class TestService(unittest.TestCase):
 
         utced = kintoneService.datetime_to_value(local)
         self.assertEqual(utc, utced)
+
+    def test_app(self):
+        kin = Account.loads({
+            'domain': 'foo',
+            'apps': {
+                'app1': {
+                    'id': 1,
+                    'token': 'dead'
+                },
+                'app2': {
+                    'id': 2,
+                    'token': 'beef'
+                }
+            }
+        })
+        self.assertIsInstance(kin, kintoneService)
+
+        app1 = kin.app(app_name='app1')
+        self.assertEqual(app1.app_name, 'app1')
+        self.assertEqual(app1.api_token, 'dead')
+
+        app2 = kin.app(app_name='app2')
+        self.assertEqual(app2.app_name, 'app2')
+        self.assertEqual(app2.api_token, 'beef')
+
+    def test_app_not_found(self):
+        kin = Account.loads({
+            'domain': 'foo',
+            'apps': {}
+        })
+        app = kin.app(app_name='app1')
+        self.assertIsNone(app)
