@@ -217,6 +217,18 @@ class Application(BaseAPI):
 
         return data
 
+    def proceed_by_id(self, record_id, action, assignee=""):
+        url = self.API_ROOT.format(self.account.domain, "record/status.json")
+        data = {
+            "id": record_id,
+            "action": action,
+            "assignee": assignee,
+            "app": self.app_id
+        }
+        resp = self._request("PUT", url, params_or_data=data)
+        r = mr.UpdateResult(resp)
+        return r
+
     def proceed(self, record_or_model, action, assignee=""):
         url = self.API_ROOT.format(self.account.domain, "record/status.json")
         data = self.__to_proceed_format(record_or_model, action, assignee)
